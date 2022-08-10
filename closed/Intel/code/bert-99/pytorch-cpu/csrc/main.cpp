@@ -4,6 +4,7 @@
 #include <vector>
 #include <thread>
 #include <unistd.h>
+#include <time.h>
 
 #include "cxxopts.hpp"
 #include "torch_sut.hpp"
@@ -47,6 +48,9 @@ int main(int argc, char **argv) {
     ("a,accuracy", "Run test in accuracy mode instead of performance",
      cxxopts::value<bool>()->default_value("false"))
 
+    ("p,find_peak_performance", "Run test in FindPeakPerformance mode instead of performance",
+     cxxopts::value<bool>()->default_value("false"))
+
     ;
 
   auto parsed_opts = opts.parse(argc, argv);
@@ -62,6 +66,7 @@ int main(int argc, char **argv) {
   auto disable_ht = parsed_opts["disable-hyperthreading"].as<bool>();
   auto test_scenario = parsed_opts["test_scenario"].as<std::string>();
   auto accuracy_mode = parsed_opts["accuracy"].as<bool>();
+  auto find_peak_performance_mode = parsed_opts["find_peak_performance"].as<bool>();
 
   mlperf::TestSettings testSettings;
   mlperf::LogSettings logSettings;
@@ -94,11 +99,20 @@ int main(int argc, char **argv) {
 
     if (accuracy_mode)
       testSettings.mode = mlperf::TestMode::AccuracyOnly;
+    else if (find_peak_performance_mode)
+      testSettings.mode = mlperf::TestMode::FindPeakPerformance;
+    else
+      testSettings.mode = mlperf::TestMode::PerformanceOnly;
+
 
     sleep(5);
+    auto start = std::chrono::system_clock::now();
     std::cout<<"Start Server testing..."<<std::endl;
     mlperf::StartTest(&server_sut, server_sut.GetQSL(), testSettings, logSettings);
     std::cout<<"Testing done."<<std::endl;
+    auto end = std::chrono::system_clock::now();
+    auto elapsed =  std::chrono::duration_cast<std::chrono::seconds>(end - start);
+    std::cout << "Time:" << elapsed.count() << "s.\n";
   }
 
   return 0;

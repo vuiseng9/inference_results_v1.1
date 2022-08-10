@@ -1,0 +1,10 @@
+closed/Intel/code/resnet50/data
+closed/Intel/code/dlrm-99.9/pytorch-cpu/gperftools-2.9.1
+closed/Intel/code/bert-99/pytorch-cpu/build
+mlperf_log_trace.json
+mlperf_log_accuracy.json
+mlperf_log_detail.txt
+mlperf_log_summary.txt
+bin/
+lib/
+*.pyc

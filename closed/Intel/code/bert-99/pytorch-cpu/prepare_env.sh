@@ -3,8 +3,10 @@ set -x
 home=$(pwd)
 
 # Provide these two
-model_dir=
-dataset_dir=
+model_dir=$home/distilbert-base-cased-distilled-squad
+# model_dir=$home/bert-small
+# model_dir=$home/bert-large-uncased
+dataset_dir=$home/datasets
 conda install -c conda-forge llvm-openmp
 
 git clone https://github.com/pytorch/pytorch.git

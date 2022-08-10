@@ -9,6 +9,7 @@ import threading
 import subprocess
 import logging
 import collections
+import time
 
 #from profiles import *
 import mlperf_loadgen as lg
@@ -35,7 +36,7 @@ def get_args():
     parser.add_argument("--scenario", choices=["Offline", "Server"], help="MLPerf scenario to run", default="Offline")
     parser.add_argument("--mlperf-conf", help="Path to mlperf.conf file")
     parser.add_argument("--user-conf", help="Path to user.conf file containing overridden workload params")
-    parser.add_argument("--mode", choices=["Accuracy", "Performance"], help="MLPerf mode to run", default="Performance")
+    parser.add_argument("--mode", choices=["Accuracy", "Performance", "FindPeakPerformance"], help="MLPerf mode to run", default="Performance")
     parser.add_argument("--workload-config", help="A json file that contains Workload related arguments for creating sut and dataset instances")
     parser.add_argument("--num-instance", type=int, help="Number of instances/consumers", default=2)
     parser.add_argument("--cpus-per-instance", type=int, help="Number of cores per instance", default=8)
@@ -43,6 +44,7 @@ def get_args():
     parser.add_argument("--precision", choices=["int8", "bf16", "fp32", "mix"], help="Model precision to run", default="int8")
     parser.add_argument("--workers-per-instance", type=int, help="Number of workers per each instance/consumer", default = 1)
     parser.add_argument("--cores-offset", type=int, help="Cpus to offset on 1st socket", default=0)
+    parser.add_argument("--output-dir", help="output directory", default="output_logs")
     args = parser.parse_args()
     return args
 
@@ -225,8 +227,14 @@ def main():
     settings.scenario = SCENARIO_MAP[scenario.lower()]
     settings.FromConfig(args.mlperf_conf, args.workload_name, scenario)
     settings.FromConfig(args.user_conf, args.workload_name, scenario)
-    settings.mode = lg.TestMode.AccuracyOnly if mode.lower()=="accuracy" else lg.TestMode.PerformanceOnly
+    if mode=="Accuracy":
+        settings.mode = lg.TestMode.AccuracyOnly
+    elif mode=="Performance":
+        settings.mode = lg.TestMode.PerformanceOnly
+    else:
+        settings.mode = lg.TestMode.FindPeakPerformance
 
+    before = time.time()
     consumers = []
     loadgen_cores = args.cores_offset
 
@@ -301,7 +309,7 @@ def main():
     qsl = lg.ConstructQSL(
         dataset_params['total_sample_count'], min(dataset_params['total_sample_count'], settings.performance_sample_count_override), load_query_samples, unload_query_samples)
 
-    log_path = "output_logs"
+    log_path = args.output_dir
     if not os.path.exists(log_path):
         os.makedirs(log_path)
 
@@ -330,6 +338,11 @@ def main():
 
     lg.DestroyQSL(qsl)
     lg.DestroySUT(sut)
+
+    after = time.time()
+    print("set time: {:.2f} s".format(after - before))
+
+
 
 
     
