@@ -131,104 +131,165 @@
 # cd bert-99/pytorch-cpu
 # bash run_server.sh
 
+# 100 50
+sed -i -e "s/50/100/g" resnet50/pytorch-cpu/scripts/ICX/user.conf.ICX40C_2S
+sed -i -e "s/10/50/g" bert-99/pytorch-cpu/user.conf
+bash parallel_model.sh
+mkdir resnet_100qps_bert_50qps
+mv perf_bert_* resnet_100qps_bert_50qps
+mv perf_resnet50_* resnet_100qps_bert_50qps
 
-sudo pqos -R 
+# 90 40
+sed -i -e "s/100/90/g" resnet50/pytorch-cpu/scripts/ICX/user.conf.ICX40C_2S
+sed -i -e "s/50/40/g" bert-99/pytorch-cpu/user.conf
+bash parallel_model.sh
+mkdir resnet_90qps_bert_40qps
+mv perf_bert_* resnet_90qps_bert_40qps
+mv perf_resnet50_* resnet_90qps_bert_40qps
 
-mkdir perf_bert_none_0
-numactl -m 0 -N 0 -C 0-15 /data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/build/bert_inference -n 4 -j 4 --test_scenario=Server --model_file=/data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/bert.pt --sample_file=/data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/squad.pt --mlperf_config=/data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/inference/mlperf.conf --user_config=/data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/user.conf -o perf_bert_none_0 -b 2 &
-P1=$!
+# 80 30
+sed -i -e "s/90/80/g" resnet50/pytorch-cpu/scripts/ICX/user.conf.ICX40C_2S
+sed -i -e "s/40/30/g" bert-99/pytorch-cpu/user.conf
+bash parallel_model.sh
+mkdir resnet_80qps_bert_30qps
+mv perf_bert_* resnet_80qps_bert_30qps
+mv perf_resnet50_* resnet_80qps_bert_30qps
 
-python3 run.py --workload-name resnet50 \
-    --mlperf-conf resnet50/pytorch-cpu/mlperf_inference/mlperf.conf \
-    --user-conf resnet50/pytorch-cpu/scripts/ICX/user.conf.ICX40C_2S \
-    --workload-config resnet50/pytorch-cpu/scripts/ICX/resnet50-config_Server_ICX40C_2S.yml \
-    --num-instance 16 \
-    --cpus-per-instance 1 \
-    --cores-offset 16 \
-    --warmup 500 \
-    --output-dir perf_resnet50_none_0 \
-    --scenario Server \
-    --mode Performance &
-P2=$!
-sleep 300
-ps aux > pid_list
-python3 filter_pid.py pid_list python3 > tmp
-python3 filter_pid.py pid_list bert_inference >> tmp
-cat tmp | sudo kill `xargs`
-wait $P1 $P2
+# 70 20
+sed -i -e "s/80/70/g" resnet50/pytorch-cpu/scripts/ICX/user.conf.ICX40C_2S
+sed -i -e "s/30/20/g" bert-99/pytorch-cpu/user.conf
+bash parallel_model.sh
+mkdir resnet_70qps_bert_20qps
+mv perf_bert_* resnet_70qps_bert_20qps
+mv perf_resnet50_* resnet_70qps_bert_20qps
 
-sudo pqos -R 
+# 60 10
+sed -i -e "s/70/60/g" resnet50/pytorch-cpu/scripts/ICX/user.conf.ICX40C_2S
+sed -i -e "s/20/10/g" bert-99/pytorch-cpu/user.conf
+bash parallel_model.sh
+mkdir resnet_60qps_bert_10qps
+mv perf_bert_* resnet_60qps_bert_10qps
+mv perf_resnet50_* resnet_60qps_bert_10qps
 
-mkdir perf_bert_none_1
-numactl -m 0 -N 0 -C 0-15 /data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/build/bert_inference -n 4 -j 4 --test_scenario=Server --model_file=/data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/bert.pt --sample_file=/data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/squad.pt --mlperf_config=/data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/inference/mlperf.conf --user_config=/data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/user.conf -o perf_bert_none_1 -b 2 &
-P1=$!
+# # 200 120
+# sed -i -e "s/700/200/g" resnet50/pytorch-cpu/scripts/ICX/user.conf.ICX40C_2S
+# sed -i -e "s/10/120/g" bert-99/pytorch-cpu/user.conf
+# bash parallel_model.sh
+# mkdir resnet_200qps_bert_120qps
+# mv perf_bert_* resnet_200qps_bert_120qps
+# mv perf_resnet50_* resnet_200qps_bert_120qps
 
-python3 run.py --workload-name resnet50 \
-    --mlperf-conf resnet50/pytorch-cpu/mlperf_inference/mlperf.conf \
-    --user-conf resnet50/pytorch-cpu/scripts/ICX/user.conf.ICX40C_2S \
-    --workload-config resnet50/pytorch-cpu/scripts/ICX/resnet50-config_Server_ICX40C_2S.yml \
-    --num-instance 16 \
-    --cpus-per-instance 1 \
-    --cores-offset 16 \
-    --warmup 500 \
-    --output-dir perf_resnet50_none_1 \
-    --scenario Server \
-    --mode Performance &
-P2=$!
-sleep 300
-ps aux > pid_list
-python3 filter_pid.py pid_list python3 > tmp
-python3 filter_pid.py pid_list bert_inference >> tmp
-cat tmp | sudo kill `xargs`
-wait $P1 $P2
+# # 100 120
+# sed -i -e "s/200/100/g" resnet50/pytorch-cpu/scripts/ICX/user.conf.ICX40C_2S
+# bash parallel_model.sh
+# mkdir resnet_100qps_bert_120qps
+# mv perf_bert_* resnet_100qps_bert_120qps
+# mv perf_resnet50_* resnet_100qps_bert_120qps
 
-sudo pqos -R 
+# # 100 50
+# sed -i -e "s/120/50/g" bert-99/pytorch-cpu/user.conf
+# bash parallel_model.sh
+# mkdir resnet_100qps_bert_50qps
+# mv perf_bert_* resnet_100qps_bert_50qps
+# mv perf_resnet50_* resnet_100qps_bert_50qps
 
-mkdir perf_bert_none_2
-numactl -m 0 -N 0 -C 0-15 /data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/build/bert_inference -n 4 -j 4 --test_scenario=Server --model_file=/data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/bert.pt --sample_file=/data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/squad.pt --mlperf_config=/data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/inference/mlperf.conf --user_config=/data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/user.conf -o perf_bert_none_2 -b 2 &
-P1=$!
+# sudo pqos -R 
 
-python3 run.py --workload-name resnet50 \
-    --mlperf-conf resnet50/pytorch-cpu/mlperf_inference/mlperf.conf \
-    --user-conf resnet50/pytorch-cpu/scripts/ICX/user.conf.ICX40C_2S \
-    --workload-config resnet50/pytorch-cpu/scripts/ICX/resnet50-config_Server_ICX40C_2S.yml \
-    --num-instance 16 \
-    --cpus-per-instance 1 \
-    --cores-offset 16 \
-    --warmup 500 \
-    --output-dir perf_resnet50_none_2 \
-    --scenario Server \
-    --mode Performance &
-P2=$!
-sleep 300
-ps aux > pid_list
-python3 filter_pid.py pid_list python3 > tmp
-python3 filter_pid.py pid_list bert_inference >> tmp
-cat tmp | sudo kill `xargs`
-wait $P1 $P2
+# mkdir perf_bert_none_0
+# numactl -m 0 -N 0 -C 0-31 /data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/build/bert_inference -n 8 -j 4 --test_scenario=Server --model_file=/data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/bert.pt --sample_file=/data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/squad.pt --mlperf_config=/data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/inference/mlperf.conf --user_config=/data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/user.conf -o perf_bert_none_0 -b 2 &
+# P1=$!
 
-sudo pqos -R 
+# numactl -m 0 -N 0 -C 0-31 python3 run.py --workload-name resnet50 \
+#     --mlperf-conf resnet50/pytorch-cpu/mlperf_inference/mlperf.conf \
+#     --user-conf resnet50/pytorch-cpu/scripts/ICX/user.conf.ICX40C_2S \
+#     --workload-config resnet50/pytorch-cpu/scripts/ICX/resnet50-config_Server_ICX40C_2S.yml \
+#     --num-instance 32 \
+#     --cpus-per-instance 1 \
+#     --cores-offset 0 \
+#     --warmup 500 \
+#     --output-dir perf_resnet50_none_0 \
+#     --scenario Server \
+#     --mode Performance &
+# P2=$!
+# sleep 300
+# ps aux > pid_list
+# python3 filter_pid.py pid_list python3 > tmp
+# python3 filter_pid.py pid_list bert_inference >> tmp
+# cat tmp | sudo kill `xargs`
+# wait $P1 $P2
 
-mkdir perf_bert_none_3
-numactl -m 0 -N 0 -C 0-15 /data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/build/bert_inference -n 4 -j 4 --test_scenario=Server --model_file=/data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/bert.pt --sample_file=/data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/squad.pt --mlperf_config=/data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/inference/mlperf.conf --user_config=/data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/user.conf -o perf_bert_none_3 -b 2 &
-P1=$!
+# sudo pqos -R 
 
-python3 run.py --workload-name resnet50 \
-    --mlperf-conf resnet50/pytorch-cpu/mlperf_inference/mlperf.conf \
-    --user-conf resnet50/pytorch-cpu/scripts/ICX/user.conf.ICX40C_2S \
-    --workload-config resnet50/pytorch-cpu/scripts/ICX/resnet50-config_Server_ICX40C_2S.yml \
-    --num-instance 16 \
-    --cpus-per-instance 1 \
-    --cores-offset 16 \
-    --warmup 500 \
-    --output-dir perf_resnet50_none_3 \
-    --scenario Server \
-    --mode Performance &
-P2=$!
-sleep 300
-ps aux > pid_list
-python3 filter_pid.py pid_list python3 > tmp
-python3 filter_pid.py pid_list bert_inference >> tmp
-cat tmp | sudo kill `xargs`
-wait $P1 $P2
+# mkdir perf_bert_none_1
+# numactl -m 0 -N 0 -C 0-31 /data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/build/bert_inference -n 8 -j 4 --test_scenario=Server --model_file=/data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/bert.pt --sample_file=/data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/squad.pt --mlperf_config=/data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/inference/mlperf.conf --user_config=/data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/user.conf -o perf_bert_none_1 -b 2 &
+# P1=$!
+
+# numactl -m 0 -N 0 -C 0-31 python3 run.py --workload-name resnet50 \
+#     --mlperf-conf resnet50/pytorch-cpu/mlperf_inference/mlperf.conf \
+#     --user-conf resnet50/pytorch-cpu/scripts/ICX/user.conf.ICX40C_2S \
+#     --workload-config resnet50/pytorch-cpu/scripts/ICX/resnet50-config_Server_ICX40C_2S.yml \
+#     --num-instance 32 \
+#     --cpus-per-instance 1 \
+#     --cores-offset 0 \
+#     --warmup 500 \
+#     --output-dir perf_resnet50_none_1 \
+#     --scenario Server \
+#     --mode Performance &
+# P2=$!
+# sleep 300
+# ps aux > pid_list
+# python3 filter_pid.py pid_list python3 > tmp
+# python3 filter_pid.py pid_list bert_inference >> tmp
+# cat tmp | sudo kill `xargs`
+# wait $P1 $P2
+
+# sudo pqos -R 
+
+# mkdir perf_bert_none_2
+# numactl -m 0 -N 0 -C 0-31 /data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/build/bert_inference -n 8 -j 4 --test_scenario=Server --model_file=/data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/bert.pt --sample_file=/data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/squad.pt --mlperf_config=/data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/inference/mlperf.conf --user_config=/data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/user.conf -o perf_bert_none_2 -b 2 &
+# P1=$!
+
+# numactl -m 0 -N 0 -C 0-31 python3 run.py --workload-name resnet50 \
+#     --mlperf-conf resnet50/pytorch-cpu/mlperf_inference/mlperf.conf \
+#     --user-conf resnet50/pytorch-cpu/scripts/ICX/user.conf.ICX40C_2S \
+#     --workload-config resnet50/pytorch-cpu/scripts/ICX/resnet50-config_Server_ICX40C_2S.yml \
+#     --num-instance 32 \
+#     --cpus-per-instance 1 \
+#     --cores-offset 0 \
+#     --warmup 500 \
+#     --output-dir perf_resnet50_none_2 \
+#     --scenario Server \
+#     --mode Performance &
+# P2=$!
+# sleep 300
+# ps aux > pid_list
+# python3 filter_pid.py pid_list python3 > tmp
+# python3 filter_pid.py pid_list bert_inference >> tmp
+# cat tmp | sudo kill `xargs`
+# wait $P1 $P2
+
+# sudo pqos -R 
+
+# mkdir perf_bert_none_3
+# numactl -m 0 -N 0 -C 0-31 /data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/build/bert_inference -n 8 -j 4 --test_scenario=Server --model_file=/data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/bert.pt --sample_file=/data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/squad.pt --mlperf_config=/data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/inference/mlperf.conf --user_config=/data2/yufenggu/inference_results_v1.1/closed/Intel/code/bert-99/pytorch-cpu/user.conf -o perf_bert_none_3 -b 2 &
+# P1=$!
+
+# numactl -m 0 -N 0 -C 0-31 python3 run.py --workload-name resnet50 \
+#     --mlperf-conf resnet50/pytorch-cpu/mlperf_inference/mlperf.conf \
+#     --user-conf resnet50/pytorch-cpu/scripts/ICX/user.conf.ICX40C_2S \
+#     --workload-config resnet50/pytorch-cpu/scripts/ICX/resnet50-config_Server_ICX40C_2S.yml \
+#     --num-instance 32 \
+#     --cpus-per-instance 1 \
+#     --cores-offset 0 \
+#     --warmup 500 \
+#     --output-dir perf_resnet50_none_3 \
+#     --scenario Server \
+#     --mode Performance &
+# P2=$!
+# sleep 300
+# ps aux > pid_list
+# python3 filter_pid.py pid_list python3 > tmp
+# python3 filter_pid.py pid_list bert_inference >> tmp
+# cat tmp | sudo kill `xargs`
+# wait $P1 $P2
 

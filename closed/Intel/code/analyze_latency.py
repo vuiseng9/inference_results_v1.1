@@ -1,4 +1,5 @@
 import sys
+import os
 
 def analyze(setting, requested_latency):
     file_name = setting+"/mlperf_log_trace.json"
@@ -22,10 +23,11 @@ def analyze(setting, requested_latency):
         # print(latencies[round(len(latencies)*0.99)])
         # print(latencies[round(len(latencies)*0.999)])
         for l in latencies:
-            if l <requested_latency:
+            if l < requested_latency:
                 valid_latency += 1
         # print(setting, "p99 latency: {:.2f} valid latency: {:.2f}%".format(latencies[round(len(latencies)*0.99)], valid_latency/len(latencies)*100))
-        print("{:.2f} {:.2f}%".format(latencies[round(len(latencies)*0.99)], valid_latency/len(latencies)*100))
+        # print("{:.2f} {:.2f}%".format(latencies[round(len(latencies)*0.99)], valid_latency/len(latencies)*100))
+        print("{:.2f}%".format(valid_latency/len(latencies)*100))
     except:
         print(setting, "file does not exist.")
 
@@ -46,11 +48,31 @@ def analyze(setting, requested_latency):
 # folder = ""
 
 folder = sys.argv[1]
-print(folder)
+
+# for root, dirs, files in os.walk(folder):
+#     if dirs != []:
+#         for dir in dirs:
+#             model = dir.split("_")[1]
+#             if model == "resnet50":
+#                 analyze(folder + dir, 100)
+#             if model == "bert":
+#                 analyze(folder + dir, 130)
+
 for model in ["bert", "resnet50"]:
-    for cache in ["_4_8"]:
-        for mb in ["_50_100", "_60_100", "_70_100", "_80_100", "_90_100", "_100_100", "_100_90", "_100_80", "_100_70", "_100_60", "_100_50",]:
+    # for cache in ["_4_8"]:
+    for cache in ["_1_1", "_2_1", "_2_2"]:
+        # for mb in ["_50_100", "_60_100", "_70_100", "_80_100", "_90_100", "_100_100", "_100_90", "_100_80", "_100_70", "_100_60", "_100_50",]:
+        for mb in ["_10_10", "_10_20", "_20_10", "_20_20"]:
             if model == "resnet50":
                 analyze(folder + "perf_" + model + cache + mb, 100)
             if model == "bert":
                 analyze(folder + "perf_" + model + cache + mb, 130)
+
+# analyze("perf_resnet50_none_0", 100)
+# analyze("perf_resnet50_none_1", 100)
+# analyze("perf_resnet50_none_2", 100)
+# analyze("perf_resnet50_none_3", 100)
+# analyze("perf_bert_none_0", 130)
+# analyze("perf_bert_none_1", 130)
+# analyze("perf_bert_none_2", 130)
+# analyze("perf_bert_none_3", 130)
